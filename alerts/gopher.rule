@@ -1,0 +1,24 @@
+groups:
+- name: gopher_proxy_alerts
+  rules:
+  - alert: HighRequestLatency
+    expr: rate(http_request_duration_seconds_sum[5m]) / rate(http_request_duration_seconds_count[5m]) > 0.5
+    for: 10m
+    labels:
+      severity: warning
+    annotations:
+      summary: "High request latency on Gopher Proxy"
+  - alert: HighErrorRate
+    expr: rate(http_requests_total{status_code=~"5.."}[5m]) / rate(http_requests_total[5m]) > 0.05
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "High error rate on Gopher Proxy"
+  - alert: GopherProxyDown
+    expr: up{job="gopher_proxy"} == 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Gopher Proxy is down"
